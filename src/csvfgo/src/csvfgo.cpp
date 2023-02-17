@@ -19,15 +19,19 @@
 #include <boost/algorithm/string.hpp>
 #include "estimator.h"
 using namespace std;
-std::string IOpath = "/home/xb/csvfgo/csv/202210200304/gnss_log_2022_10_20_18_03_04_result.csv"; // Read the file
-std::string IOtimepath = "/home/xb/csvfgo/csv/202210200304/IO(systime)_2022_10_20_18_03_04.csv"; // Read the file
-std::string VIOpath = "/home/xb/csvfgo/csv/202210200304/vins_result_no_loop.csv"; // Read the file
-std::string GNSSpath = "/home/xb/csvfgo/csv/202210200304/csvfgo(systime)_gnss_log_2022_10_20_18_03_04.csv"; // Read the file
+std::string IOpath = "/home/xb/xbcsvfgo/csvfgo/csv/gnss_log_2022_10_20_18_03_04_IOresult.csv"; // Read the file
+std::string IOtimepath = "/home/xb/xbcsvfgo/csvfgo/csv/IOtime_2022_10_20_18_03_04.csv"; // Read the file
+std::string VIOpath = "/home/xb/xbcsvfgo/csvfgo/csv/20221020180335vins_result_no_loop.csv"; // Read the file
+std::string GNSSpath = "/home/xb/xbcsvfgo/csvfgo/csv/gnss_log_2022_10_20_18_03_04.csv"; // Read the file
+std::string VIO_LLA_PATH = "/home/xb/xbcsvfgo/csvfgo/csv/20221020180335vins_mono_lla.csv"; // Read the file
+std::string GT_LLA_PATH = "/home/xb/xbcsvfgo/csvfgo/csv/20221020180335GT_lla.csv"; // Read the file
 
 // std::string IOpath = "/home/xb/csvfgo/csv/20230127181009/gnss_log_2023_01_27_18_10_09_IO_lebal_result.csv"; // Read the file
 // std::string IOtimepath = "/home/xb/csvfgo/csv/20230127181009/gnss_log_2023_01_27_18_10_09_IO_time.csv"; // Read the file
 // std::string VIOpath = "/home/xb/csvfgo/csv/20230127181009/vins_result_no_loop_modified.csv"; // Read the file
 // std::string GNSSpath = "/home/xb/csvfgo/csv/20230127181009/csvfgo_2023_01_27_18_10_09_fgo.csv"; // Read the file
+// std::string VINS_LLA_result = "/home/xb/xbcsvfgo/csvfgo/csv/csvfgo(systime)_gnss_log_2022_10_20_18_03_04.csv"; // Read the file
+// std::string GT_LLA_result = "/home/xb/xbcsvfgo/csvfgo/csv/csvfgo(systime)_gnss_log_2022_10_20_18_03_04.csv"; // Read the file
 
 // std::string VIOpath = "/home/xb/csvfgo/csv/vins_result_no_loop_modified.csv"; // Read the file
 
@@ -35,13 +39,16 @@ std::string GNSSpath = "/home/xb/csvfgo/csv/202210200304/csvfgo(systime)_gnss_lo
 // std::string IOtimepath = "/home/xb/csvfgo/csv/20230127183118/csvfgo_2023_01_27_18_31_18_IO_time.csv"; // Read the file
 // std::string VIOpath = "/home/xb/csvfgo/csv/20230127183118/vins_result_no_loop_modified.csv"; // Read the file
 // std::string GNSSpath = "/home/xb/csvfgo/csv/20230127183118/csvfgo_2023_01_27_18_31_18_nmea.csv"; // Read the file
-
+// std::string VINS_LLA_result = "/home/xb/xbcsvfgo/csvfgo/csv/csvfgo(systime)_gnss_log_2022_10_20_18_03_04.csv"; // Read the file
+// std::string GT_LLA_result = "/home/xb/xbcsvfgo/csvfgo/csv/csvfgo(systime)_gnss_log_2022_10_20_18_03_04.csv"; // Read the file
 
 std::vector<std::vector<ObsPtr>> gpsresult;
 std::vector<std::vector<EphemBasePtr>> gpsresult_buf;
 std::vector<double> gpsresult_buf_;
 bool newGPS= false;
 Eigen::Vector3d gpsinput;
+std::vector<double> gnss_t;
+
 void readIOresult(std::string IOpath, std::vector<int> &result)
 {
     std::printf("read io result ... "); std::fflush(stdout);
@@ -60,7 +67,7 @@ void readIOresult(std::string IOpath, std::vector<int> &result)
     IO = stoi((s).c_str(), NULL);
     result.push_back(IO);
     }
-    std::printf("done\n");
+    std::printf("readIOresult done\n");
     cout<<result.size()<<endl;
 }
 void readIOtimeresult(std::string IOtimepath, std::vector<double> &IOtimeresult)
@@ -81,17 +88,13 @@ void readIOtimeresult(std::string IOtimepath, std::vector<double> &IOtimeresult)
     IOtime = stod((s).c_str(), NULL);
     IOtimeresult.push_back(IOtime);
     }
-    std::printf("done\n");
+    std::printf("readIOtimeresult done\n");
     cout<<IOtimeresult.size()<<endl;
 }
 void readVINSresult(std::string VIOpath)
 {
     std::cout << "read vins result ... "; std::fflush(stdout);
     FILE* pathFile;
-    const char * c = VIOpath.c_str();
-    pathFile = fopen(c ,"r");
-    if(pathFile == NULL)
-    {printf( "open failure" );}    
     // vector<double> result_t;
     // double t;
     // vector<Eigen::Vector3d> result_P;
@@ -101,6 +104,10 @@ void readVINSresult(std::string VIOpath)
     double t, px, py, pz, Qx, Qy, Qz, Qw, vx, vy, vz;
     vector<double> result_t, result_px, result_py, result_pz, result_Qx, result_Qy, result_Qz, result_Qw,
      result_vx, result_vy, result_vz;
+    const char * c = VIOpath.c_str();
+    pathFile = fopen(c ,"r");
+    if(pathFile == NULL)
+    {printf( "open failure" );}    
 
     ifstream fin(c); 
     string s;  
@@ -191,10 +198,95 @@ void readVINSresult(std::string VIOpath)
         }
     }
     std::cout << "input odometry ... "; std::fflush(stdout);
-    cout<<result_t.size()<<endl;
     inputOdom(result_t, result_px, result_py, result_pz, result_Qx, result_Qy, result_Qz, result_Qw,
      result_vx, result_vy, result_vz);
-    std::cout << "done.\n";
+    // std::cout << "done.\n";
+}
+void read_VINS_LLA_result(std::string VIO_LLA_path)
+{
+    std::cout << "read vins lla result ... "; std::fflush(stdout);
+    FILE* pathFile;
+    double t, px, py, pz, Qx, Qy, Qz, Qw;
+    vector<double> result_t, result_px, result_py, result_pz, result_Qx, result_Qy, result_Qz, result_Qw;
+    const char * c = VIO_LLA_path.c_str();
+    pathFile = fopen(c ,"r");
+    if(pathFile == NULL)
+    {printf( "open failure" );}    
+
+    ifstream fin(c); 
+    string s;  
+
+    while(getline(fin,s) )
+    {    
+        std::vector<std::string> tkns;
+        boost::split(tkns, s, boost::is_any_of(" "));
+        for (int i = 0; i < tkns.size(); i++) {
+            switch (i) {
+            case 0:
+                t = stod((tkns[i]).c_str(), NULL);
+                result_t.push_back(t);
+                break;
+            case 1:
+                px = stod((tkns[i]).c_str(), NULL);
+                result_px.push_back(px);
+                break;
+            case 2:
+                py = stod((tkns[i]).c_str(), NULL);
+                result_py.push_back(py);
+                break;
+            case 3:
+                pz = stod((tkns[i]).c_str(), NULL);
+                result_pz.push_back(pz);
+                break;
+            case 4:
+                Qx = stod((tkns[i]).c_str(), NULL); 
+                result_Qx.push_back(Qx);
+                break;   
+            case 5:
+                Qy = stod((tkns[i]).c_str(), NULL); 
+                result_Qy.push_back(Qy);
+                break;   
+            case 6:
+                Qz = stod((tkns[i]).c_str(), NULL); 
+                result_Qz.push_back(Qz);
+                break;   
+            case 7:
+                Qw = stod((tkns[i]).c_str(), NULL);
+                result_Qw.push_back(Qw);
+                break;
+            }
+        }
+    }
+    
+    ofstream vins_enu_path_file(VINS_ENU_RESULT_PATH, ios::ate);
+    
+    for (int i = 0; i < result_t.size(); i++) 
+    {
+        Eigen::Vector3d lla_pos, lla;
+        lla_pos<< 22.304185, 114.17968, 9.999999999;
+        lla << result_px[i], result_py[i], result_pz[i];
+        ecef_pos = geo2ecef(lla);
+        ecef_pos.x() -= (-2418191.143); 
+        ecef_pos.y() -= 5385827.079; 
+        ecef_pos.z() -= 2405613.484;
+
+        enu_pos = ecef2enu(lla_pos, ecef_pos);
+
+        vins_enu_path_file.setf(ios::fixed, ios::floatfield);
+        vins_enu_path_file.precision(0);
+        vins_enu_path_file << result_t[i] << " ";
+        vins_enu_path_file.precision(9);
+        vins_enu_path_file  << enu_pos.x() << " "
+                                << enu_pos.y() << " "
+                                << enu_pos.z() << " "
+                                << result_Qx[i] << " "
+                                << result_Qy[i] << " "
+                                << result_Qz[i] << " "
+                                << result_Qw[i] << endl;
+                    
+                }
+    vins_enu_path_file.close();
+    std::cout << "VINS_ENU_Done.\n";
 }
 
 void readGNSSresult(std::string GNSSpath)
@@ -242,38 +334,118 @@ void readGNSSresult(std::string GNSSpath)
         }
     inputGPS(result_t, result_lat, result_lon, result_alt, result_posAccuracy);
     }
-    std::cout << "done.\n";
+    gnss_t = result_t;
+    std::cout << "readGNSSresult done.\n";
+}
+void read_GT_LLA_result(std::string GT_LLA_path)
+{
+    std::cout << "read gt lla result ... "; std::fflush(stdout);
+    FILE* pathFile;
+    double t, px, py, pz, Qx, Qy, Qz, Qw;
+    vector<double> result_t, result_px, result_py, result_pz, result_Qx, result_Qy, result_Qz, result_Qw;
+    const char * c = GT_LLA_path.c_str();
+    pathFile = fopen(c ,"r");
+    if(pathFile == NULL)
+    {printf( "open failure" );}    
+
+    ifstream fin(c); 
+    string s;  
+
+    while(getline(fin,s) )
+    {    
+        std::vector<std::string> tkns;
+        boost::split(tkns, s, boost::is_any_of(" "));
+        for (int i = 0; i < tkns.size(); i++) {
+            switch (i) {
+            case 0:
+                t = stod((tkns[i]).c_str(), NULL);
+                result_t.push_back(t);
+                break;
+            case 1:
+                px = stod((tkns[i]).c_str(), NULL);
+                result_px.push_back(px);
+                break;
+            case 2:
+                py = stod((tkns[i]).c_str(), NULL);
+                result_py.push_back(py);
+                break;
+            case 3:
+                pz = stod((tkns[i]).c_str(), NULL);
+                result_pz.push_back(pz);
+                break;
+            case 4:
+                Qx = stod((tkns[i]).c_str(), NULL); 
+                result_Qx.push_back(Qx);
+                break;   
+            case 5:
+                Qy = stod((tkns[i]).c_str(), NULL); 
+                result_Qy.push_back(Qy);
+                break;   
+            case 6:
+                Qz = stod((tkns[i]).c_str(), NULL); 
+                result_Qz.push_back(Qz);
+                break;   
+            case 7:
+                Qw = stod((tkns[i]).c_str(), NULL);
+                result_Qw.push_back(Qw);
+                break;
+            }
+        }
+    }
+    
+    ofstream gt_enu_path_file(GT_ENU_RESULT_PATH, ios::ate);
+    
+    for (int i = 0; i < result_t.size(); i++) 
+    {
+        Eigen::Vector3d lla_pos, lla;
+        lla << result_px[i], result_py[i], result_pz[i];
+        lla_pos<< 22.304185, 114.17968, 9.999999999;
+        ecef_pos = geo2ecef(lla);
+        ecef_pos.x() -= (-2418191.143); 
+        ecef_pos.y() -= 5385827.079; 
+        ecef_pos.z() -= 2405613.484;
+
+        enu_pos = ecef2enu(lla_pos, ecef_pos);
+
+        gt_enu_path_file.setf(ios::fixed, ios::floatfield);
+        gt_enu_path_file.precision(0);
+        gt_enu_path_file << result_t[i] << " ";
+        gt_enu_path_file.precision(9);
+        gt_enu_path_file  << enu_pos.x() << " "
+                            << enu_pos.y() << " "
+                            << enu_pos.z() << " "
+                            << result_Qx[i] << " "
+                            << result_Qy[i] << " "
+                            << result_Qz[i] << " "
+                            << result_Qw[i] << endl;
+                }
+    gt_enu_path_file.close();
+    std::cout << "GT_ENU_Done.\n";
 }
 
 void inputOdom(vector<double> result_t, vector<double> result_px, vector<double> result_py, vector<double> result_pz, 
 vector<double> result_Qx, vector<double> result_Qy, vector<double> result_Qz, vector<double> result_Qw, 
 vector<double> result_vx, vector<double> result_vy, vector<double> result_vz)
 {   
-    cout<<"z"<<endl;
     mPoseMap.lock();
     double time;
-    cout<<"z"<<endl;
     for (int i = 0; i < result_t.size(); i++) {
         Eigen::Vector3d P_;
         Eigen::Quaterniond Q_;
         Eigen::Vector3d V_;
-    cout<<"1"<<endl;
     time = result_t[i];      
     P_(0) = result_px[i];   
     P_(1) = result_py[i];   
     P_(2) = result_pz[i];   
-    cout<<"2"<<endl;
     P.push_back(P_);
     Q_.x() = result_Qx[i];
     Q_.y() = result_Qy[i];
     Q_.z() = result_Qz[i];
     Q_.w() = result_Qw[i];
-    cout<<"3"<<endl;
     Q.push_back(Q_);
     V_(0) = result_vx[i];   
     V_(1) = result_vy[i];   
     V_(2) = result_vz[i];   
-    cout<<"4"<<endl;
     V.push_back(V_);
     timeMap = result_t;
     // P[i].x = result_px[i];            
@@ -283,7 +455,6 @@ vector<double> result_vx, vector<double> result_vy, vector<double> result_vz)
     // Q.y()[i] << result_Qy[i]; 
     // Q.x()[i] << result_Qz[i];            
     // Q.z()[i] << result_Qw[i]; 
-    cout<<"5"<<endl;
     vector<double> localPose{P_(0), P_(1), P_(2), 
     					     Q_.w(), Q_.x(), Q_.y(), Q_.z(),
                              V_(0), V_(1), V_(2)};
@@ -364,6 +535,21 @@ void GPS2XYZ(double latitude, double longitude, double altitude, double* xyz)
     //2551 -11.20507 -23.60724 -10.95947 -0.29125 0.66597 -0.65687 0.20045 
     printf("la: %f lo: %f al: %f\n", latitude, longitude, altitude);
     printf("gps x: %f y: %f z: %f\n", xyz[0], xyz[1], xyz[2]);
+    // printf("\nnewGPS = true;\n");
+}
+
+void XYZ2GPS(double x, double y, double z, double *lla)
+{
+    // if(!newPose)
+    // {
+    //     geoConverter.Reset(x, y, z);
+    //     newPose = true;
+    // }
+    printf("xyz2gps\n");
+    // cin.get();
+    geoConverter.Reverse(x, y, z, lla[0], lla[1], lla[2]);
+    printf("la: %f lo: %f al: %f\n", lla[0], lla[1], lla[2]);
+    printf("gps x: %f y: %f z: %f\n", x, y, z);
     // printf("\nnewGPS = true;\n");
 }
 
@@ -1012,7 +1198,7 @@ bool GNSSVIAlign()
 
     // 1. get a rough global location
     Eigen::Matrix<double, 7, 1> rough_xyzt;
-    rough_xyzt.setZero();
+    // rough_xyzt.setZero();
 
     // if (!gnss_vi_initializer.coarse_localization(rough_xyzt))
     // {
@@ -1033,7 +1219,7 @@ bool GNSSVIAlign()
         std::cerr << "Fail to align ENU and local frames.\n";
         return false;
     }
-    std::cout << "aligned_yaw is " << aligned_yaw*180.0/M_PI << '\n';
+    // std::cout << "aligned_yaw is " << aligned_yaw*180.0/M_PI << '\n';
 
     // // 3. perform anchor refinement
     // std::vector<Eigen::Vector3d> local_ps;
@@ -1073,7 +1259,7 @@ bool GNSSVIAlign()
     // }
     // anc_ecef = refined_xyzt.head<3>();
     R_ecef_enu = ecef2rotation(rough_anchor_ecef);
-    anc_ecef = rough_anchor_ecef;
+
     yaw_enu_local = aligned_yaw;
 
     return true;
@@ -1116,7 +1302,6 @@ int main(int argc, char **argv)
             ceres::Solver::Options options;
             options.linear_solver_type = ceres::SPARSE_NORMAL_CHOLESKY;
             options.max_num_iterations = 500;
-            // options.num_threads = 8;
             printf("\nglobal optimization\n");
             ceres::Solver::Summary summary;
             ceres::LossFunction *loss_function;
@@ -1170,6 +1355,7 @@ int main(int argc, char **argv)
                 printf("\nglobal optimization2222222\n");
             }
             map<double, vector<double>>::iterator iterVIO, iterVIOa, iterVIONext, iterGPS, iterGNSS;
+            
             int resultlength = result.size();
             cout<<" result:"<<resultlength;
             vector<int>::iterator iterIO = result.begin();
@@ -1246,10 +1432,11 @@ int main(int argc, char **argv)
                     paramBlks_vins.push_back(t_array[i]);
                 }
                 //gps factor
+                GPSPositionMap = OriGPSPositionMap;
                 printf("gps factor, %d, %.0f (%.1f - %.1f)\n", GPSPositionMap.size(), 
                     (std::prev(GPSPositionMap.end())->first - GPSPositionMap.begin()->first +1.0),
                     GPSPositionMap.begin()->first, std::prev(GPSPositionMap.end())->first);
-                
+                double t = iterVIO->first;
                 iterGPS = GPSPositionMap.lower_bound(t);
                 std::printf("gps ptr (%d) dt: %.1f\n", (int)(iterGPS==GPSPositionMap.end()), (iterGPS->first - t));
                 // printf("======================================================================= %.3f : %.3f - %.3f\n", iterVIO->first, GPSPositionMap.begin()->first, prev(GPSPositionMap.end())->first);
@@ -1258,7 +1445,7 @@ int main(int argc, char **argv)
                     printf("\ngpsfgo ============= %.1f %.1f (%.1f - %.1f, %d)\n", iterGPS->first, iterGPS->second[3],
                         GPSPositionMap.begin()->first, prev(GPSPositionMap.end())->first, GPSPositionMap.size());
                     ceres::CostFunction* gps_function = TError::Create(iterGPS->second[0], iterGPS->second[1], 
-                                                                    //    iterGPS->second[2], (iterGPS->second[3]==0.0 ? 99.0 : iterGPS->second[3]*1e+2));
+                                                                    //    iterGPS->second[2], (iterGPS->second[3]==0.0 ? 99.0 : iterGPS->second[3]*1e+1));
                                                                        iterGPS->second[2], (iterGPS->second[3]==0.0 ? 99.0 : std::sqrt(iterGPS->second[3])*1e+1) / (1 - IO)); // 1e-5
                     //printf("inverse weight %f \n", iterGPS->second[3]);
                     ceres::ResidualBlockId block_id = problem.AddResidualBlock(gps_function, loss_function, t_array[i]);
@@ -1272,7 +1459,8 @@ int main(int argc, char **argv)
             ceres::Solve(options, &problem, &summary);
             std::cout << summary.FullReport() << "\n";
             std::cout << "success " << summary.IsSolutionUsable() << summary.is_constrained << " residual blks: " << summary.num_residual_blocks << std::endl;
-            ofstream loop_path_file(VINS_RESULT_PATH, ios::ate);
+
+            ofstream loop_path_file(CSVFGO_RESULT_PATH, ios::ate);
             for (int i = 0; i < length; i++) {
             loop_path_file.setf(ios::fixed, ios::floatfield);
             loop_path_file.precision(0);
@@ -1287,19 +1475,14 @@ int main(int argc, char **argv)
                             << q_array[i][3] << endl;
             }
             loop_path_file.close();
-
-
-            double ta = iterVIOa->first;
-            // iterGNSS = GNSSPositionMap.lower_bound(ta);
-            
             ofstream gnss_global_path_file(GNSS_RESULT_PATH, ios::ate);
-            ofstream lla_global_path_file(GNSSLLA_RESULT_PATH, ios::ate);
-            ofstream enu_global_path_file(GNSSENU_RESULT_PATH, ios::ate);
+            ofstream gnss_lla_global_path_file(GNSS_LLA_RESULT_PATH, ios::ate);
+            ofstream gnss_enu_global_path_file(GNSS_ENU_RESULT_PATH, ios::ate);
             int count = 0;
             // if ((iterGNSS != GPSPositionMap.end()) && (fabs(iterGNSS->first - ta) < 0.1))// 
             for (iterGNSS = GNSSPositionMap.begin(); iterGNSS != GNSSPositionMap.end();iterGNSS++)
                 {
-                    std::cin.get();
+                    // std::cin.get();
                     printf("\ngpsglobal ============= %.1f %.1f %.1f \n", iterGNSS->second[0],iterGNSS->second[1], iterGNSS->second[2]);
                     
                     Eigen::Vector3d gps;
@@ -1310,7 +1493,6 @@ int main(int argc, char **argv)
                     std::cout << "enu_pos:\n" << enu_pos << endl;
                     
                     Eigen::Vector3d ref_gps;
-                    // ref_gps << -2418216.80, 5385827.35, 2405592.53; //20221
                     // ref_gps << -2418214.014, 5385823.43, 2405596.833; //20221020180335
                     ref_gps << -2418233.60, 5385826.39, 2405572.61; // 1st gps
                     // ref_gps << -2418200.537, 5385820.32, 2405619.124; //20230127181059
@@ -1338,7 +1520,7 @@ int main(int argc, char **argv)
                     std::cout << "enu_ori:\n" << enu_ori.x() << " " << enu_ori.y() << " " << enu_ori.z() << " " << enu_ori.w() << endl;
                     gnss_global_path_file.setf(ios::fixed, ios::floatfield);
                     gnss_global_path_file.precision(0);
-                    gnss_global_path_file << timeMap[count] << " ";
+                    gnss_global_path_file << gnss_t[count] << " ";
                     gnss_global_path_file.precision(5);
                     gnss_global_path_file  << enu_pos.x() << " "
                                             << enu_pos.y() << " "
@@ -1348,11 +1530,11 @@ int main(int argc, char **argv)
                                             << enu_ori.z() << " "
                                             << enu_ori.w() << endl;
 
-                    lla_global_path_file.setf(ios::fixed, ios::floatfield);
-                    lla_global_path_file.precision(0);
-                    lla_global_path_file << timeMap[count] << " ";
-                    lla_global_path_file.precision(9);
-                    lla_global_path_file  << lla_pos.x() << " "
+                    gnss_lla_global_path_file.setf(ios::fixed, ios::floatfield);
+                    gnss_lla_global_path_file.precision(0);
+                    gnss_lla_global_path_file << gnss_t[count] << " ";
+                    gnss_lla_global_path_file.precision(9);
+                    gnss_lla_global_path_file  << lla_pos.x() << " "
                                             << lla_pos.y() << " "
                                             << lla_pos.z() << " "
                                             << enu_ori.x() << " "
@@ -1365,14 +1547,14 @@ int main(int argc, char **argv)
                     ecef_pos.y() -= 5385827.079; 
                     ecef_pos.z() -= 2405613.484;
 
-                    lla_pos << -2418191.143,	5385827.079	,2405613.484;
+                    lla_pos<< 22.304185, 114.17968, 9.999999999;
                     enu_pos = ecef2enu(lla_pos, ecef_pos);
 
-                    enu_global_path_file.setf(ios::fixed, ios::floatfield);
-                    enu_global_path_file.precision(0);
-                    enu_global_path_file << timeMap[count] << " ";
-                    enu_global_path_file.precision(9);
-                    enu_global_path_file  << enu_pos.x() << " "
+                    gnss_enu_global_path_file.setf(ios::fixed, ios::floatfield);
+                    gnss_enu_global_path_file.precision(0);
+                    gnss_enu_global_path_file << gnss_t[count] << " ";
+                    gnss_enu_global_path_file.precision(9);
+                    gnss_enu_global_path_file  << enu_pos.x() << " "
                                             << enu_pos.y() << " "
                                             << enu_pos.z() << " "
                                             << enu_ori.x() << " "
@@ -1383,9 +1565,64 @@ int main(int argc, char **argv)
                     count++; 
                 }
             gnss_global_path_file.close();
-            lla_global_path_file.close();
+            gnss_lla_global_path_file.close();
+            gnss_enu_global_path_file.close();
 
+            
+            ofstream csvfgo_lla_path_file(CSVFGO_LLA_RESULT_PATH, ios::ate);
+            ofstream csvfgo_enu_path_file(CSVFGO_ENU_VINS_RESULT_PATH, ios::ate);
+            double lla[3];
+            std::cout << "lla " <<endl;
+            for (int i = 0; i < length; i++) {
+            std::cout << "lla path loop " <<endl;
+            double x = t_array[i][0];
+            double y = t_array[i][1];
+            double z = t_array[i][2];
+            std:cout<< x << y << z << endl;
+            XYZ2GPS(x, y, z, lla);
+            std::cout << "XYZ2GPS done " <<endl;
+            csvfgo_lla_path_file.setf(ios::fixed, ios::floatfield);
+            csvfgo_lla_path_file.precision(0);
+            csvfgo_lla_path_file << timeMap[i] << " ";
+            csvfgo_lla_path_file.precision(9);
+            csvfgo_lla_path_file << lla[0] << " "
+                            << lla[1]  << " "
+                            << lla[2]  << " "
+                            << q_array[i][0] << " "
+                            << q_array[i][1] << " "
+                            << q_array[i][2] << " "
+                            << q_array[i][3]<< endl;
+            Eigen::Vector3d csvfgolla;
+            csvfgolla << lla[0], lla[1], lla[2] ;
 
+            ecef_pos = geo2ecef(csvfgolla);
+            ecef_pos.x() -= (-2418191.143); 
+            ecef_pos.y() -= 5385827.079; 
+            ecef_pos.z() -= 2405613.484;
+            Eigen::Vector3d lla_pos;
+            lla_pos << 22.304185, 114.17968, 9.999999999;
+            enu_pos = ecef2enu(lla_pos, ecef_pos);
+
+            csvfgo_enu_path_file.setf(ios::fixed, ios::floatfield);
+            csvfgo_enu_path_file.precision(0);
+            csvfgo_enu_path_file << timeMap[i] 
+                                        << " ";
+            csvfgo_enu_path_file.precision(9);
+            csvfgo_enu_path_file  << enu_pos.x() << " "
+                                    << enu_pos.y() << " "
+                                    << enu_pos.z() << " "
+                                    << q_array[i][0] << " "
+                                    << q_array[i][1] << " "
+                                    << q_array[i][2] << " "
+                                    << q_array[i][3]<< endl;
+            }
+
+            csvfgo_lla_path_file.close();
+            csvfgo_enu_path_file.close();
+            std::cout << "lla done " <<endl;
+
+            read_VINS_LLA_result(VIO_LLA_PATH);
+            read_GT_LLA_result(GT_LLA_PATH);
             ceres::Problem::EvaluateOptions opts_eval;
             opts_eval.apply_loss_function = false;
             opts_eval.residual_blocks = resdBlks_gps;

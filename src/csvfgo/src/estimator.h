@@ -241,6 +241,7 @@ map<double, vector<double>> GPSPositionMap;
 map<double, vector<double>> GNSSPositionMap;
 vector<double> timeMap;
 void GPS2XYZ(double latitude, double longitude, double altitude, double *xyz);
+void XYZ2GPS(double *latitude, double *longitude, double *altitude, double x, double y, double z);
 // bool initGPS;
 
 bool isSlidingWindow = 1;

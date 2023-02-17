@@ -33,7 +33,13 @@ extern double BIAS_GYR_THRESHOLD;
 extern double SOLVER_TIME;
 extern int NUM_ITERATIONS;
 extern std::string EX_CALIB_RESULT_PATH;
-extern std::string VINS_RESULT_PATH;
+extern std::string CSVFGO_RESULT_PATH;
+extern std::string CSVFGO_LLA_RESULT_PATH;
+extern std::string GNSS_LLA_RESULT_PATH;
+extern std::string GNSS_ENU_RESULT_PATH;
+extern std::string CSVFGO_ENU_VINS_RESULT_PATH;
+extern std::string VINS_ENU_RESULT_PATH;
+extern std::string GT_ENU_RESULT_PATH;
 extern std::string FACTOR_GRAPH_RESULT_PATH;
 extern std::string IMU_TOPIC;
 extern double TD;
@@ -56,8 +62,6 @@ extern double GNSS_DOPP_STD_THRES;
 extern uint32_t GNSS_TRACK_NUM_THRES;
 extern double GNSS_DDT_WEIGHT;
 extern std::string GNSS_RESULT_PATH;
-extern std::string GNSSLLA_RESULT_PATH;
-extern std::string GNSSENU_RESULT_PATH;
 
 void readParameters(ros::NodeHandle &n);
 

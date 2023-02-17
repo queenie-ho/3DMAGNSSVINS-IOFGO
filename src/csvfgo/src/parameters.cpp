@@ -17,11 +17,14 @@ int NUM_ITERATIONS;
 int ESTIMATE_EXTRINSIC;
 int ESTIMATE_TD;
 std::string EX_CALIB_RESULT_PATH;
-std::string VINS_RESULT_PATH ="/home/xb/csvfgo/csvfgo.csv";
-std::string GNSS_RESULT_PATH ="/home/xb/csvfgo/gnss_global.csv";
-std::string GNSSLLA_RESULT_PATH ="/home/xb/csvfgo/gnss_global_lla.csv";
-std::string GNSSENU_RESULT_PATH ="/home/xb/csvfgo/gnss_global_enu.csv";
-std::string FACTOR_GRAPH_RESULT_PATH;
+std::string CSVFGO_RESULT_PATH ="/home/xb/xbcsvfgo/csvfgo.csv";
+std::string CSVFGO_LLA_RESULT_PATH ="/home/xb/xbcsvfgo/csvfgo_lla.csv";
+std::string GNSS_LLA_RESULT_PATH ="/home/xb/xbcsvfgo/gnss_lla.csv";
+std::string GNSS_ENU_RESULT_PATH ="/home/xb/xbcsvfgo/gnss_enu.csv";
+std::string CSVFGO_ENU_VINS_RESULT_PATH ="/home/xb/xbcsvfgo/csvfgo_enu.csv";
+std::string VINS_ENU_RESULT_PATH ="/home/xb/xbcsvfgo/vinsmono_enu.csv";
+std::string GT_ENU_RESULT_PATH ="/home/xb/xbcsvfgo/gt_enu.csv";
+std::string FACTOR_GRAPH_RESULT_PATH; 
 std::string IMU_TOPIC;
 double ROW, COL;
 double TD;
@@ -41,6 +44,7 @@ double GNSS_PSR_STD_THRES;
 double GNSS_DOPP_STD_THRES;
 uint32_t GNSS_TRACK_NUM_THRES;
 double GNSS_DDT_WEIGHT;
+std::string GNSS_RESULT_PATH;
 
 template <typename T>
 T readParam(ros::NodeHandle &n, std::string name)
@@ -86,10 +90,10 @@ void readParameters(ros::NodeHandle &n)
     std::string OUTPUT_DIR(actual_output_dir);
     FileSystemHelper::createDirectoryIfNotExists(OUTPUT_DIR.c_str());
 
-    VINS_RESULT_PATH = OUTPUT_DIR + "/vins_result_no_loop.csv";
-    std::ofstream fout1(VINS_RESULT_PATH, std::ios::out);
+    CSVFGO_RESULT_PATH = OUTPUT_DIR + "/csvfgo_result_loop.csv";
+    std::ofstream fout1(CSVFGO_RESULT_PATH, std::ios::out);
     fout1.close();
-    std::cout << "result path " << VINS_RESULT_PATH << std::endl;
+    std::cout << "result path " << CSVFGO_RESULT_PATH << std::endl;
 
     FACTOR_GRAPH_RESULT_PATH = OUTPUT_DIR + "/factor_graph_result.txt";
     std::ofstream fout2(FACTOR_GRAPH_RESULT_PATH, std::ios::out);
