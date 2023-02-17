@@ -1,0 +1,8 @@
+prefix=/home/xb/csvfgo/install
+
+Name: gnss_comm
+Description: Description of gnss_comm
+Version: 1.0.0
+Cflags: -I${prefix}/include
+Libs: -L${prefix}/lib -lgnss_comm
+Requires: roscpp std_msgs message_generation

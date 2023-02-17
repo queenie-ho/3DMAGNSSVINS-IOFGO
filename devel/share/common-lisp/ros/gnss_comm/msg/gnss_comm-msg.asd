@@ -1,0 +1,28 @@
+
+(cl:in-package :asdf)
+
+(defsystem "gnss_comm-msg"
+  :depends-on (:roslisp-msg-protocol :roslisp-utils :std_msgs-msg
+)
+  :components ((:file "_package")
+    (:file "GnssBestXYZMsg" :depends-on ("_package_GnssBestXYZMsg"))
+    (:file "_package_GnssBestXYZMsg" :depends-on ("_package"))
+    (:file "GnssEphemMsg" :depends-on ("_package_GnssEphemMsg"))
+    (:file "_package_GnssEphemMsg" :depends-on ("_package"))
+    (:file "GnssGloEphemMsg" :depends-on ("_package_GnssGloEphemMsg"))
+    (:file "_package_GnssGloEphemMsg" :depends-on ("_package"))
+    (:file "GnssMeasMsg" :depends-on ("_package_GnssMeasMsg"))
+    (:file "_package_GnssMeasMsg" :depends-on ("_package"))
+    (:file "GnssObsMsg" :depends-on ("_package_GnssObsMsg"))
+    (:file "_package_GnssObsMsg" :depends-on ("_package"))
+    (:file "GnssPVTSolnMsg" :depends-on ("_package_GnssPVTSolnMsg"))
+    (:file "_package_GnssPVTSolnMsg" :depends-on ("_package"))
+    (:file "GnssSvsMsg" :depends-on ("_package_GnssSvsMsg"))
+    (:file "_package_GnssSvsMsg" :depends-on ("_package"))
+    (:file "GnssTimeMsg" :depends-on ("_package_GnssTimeMsg"))
+    (:file "_package_GnssTimeMsg" :depends-on ("_package"))
+    (:file "GnssTimePulseInfoMsg" :depends-on ("_package_GnssTimePulseInfoMsg"))
+    (:file "_package_GnssTimePulseInfoMsg" :depends-on ("_package"))
+    (:file "StampedFloat64Array" :depends-on ("_package_StampedFloat64Array"))
+    (:file "_package_StampedFloat64Array" :depends-on ("_package"))
+  ))

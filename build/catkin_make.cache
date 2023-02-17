@@ -1,0 +1,2 @@
+csvfgo:gnss_comm
+-DCATKIN_DEVEL_PREFIX=/home/xb/csvfgo/devel -DCMAKE_INSTALL_PREFIX=/home/xb/csvfgo/install -G Unix Makefiles
