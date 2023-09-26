@@ -30,3 +30,4 @@ The system framework and VIO part are adapted from <a href="https://github.com/H
 
 <!-- Related Publications  -->
 ## Related Publications
+Ho, H. Y., Ng, H. F., Leung, Y. T., Wen, W., Hsu, L. T., & Luo, Y. (2023). Smartphone Level Indoor/outdoor Ubiquitous Pedestrian Positioning 3DMA Gnss/vins Integration Using Fgo. The International Archives of the Photogrammetry, Remote Sensing and Spatial Information Sciences, 48, 175-182.
