@@ -4,7 +4,7 @@
 ## Prerequisites
 
 This package is tested in Ubuntu 18.04 under ROS Kinetic environment.
-It requires C++11, Eigen 3.3.3 and ceres 1.12.0.
+It requires C++11, Eigen 3.3.3, Pangolin and ceres 1.12.0.
 
 
 
