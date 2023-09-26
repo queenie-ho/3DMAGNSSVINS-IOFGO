@@ -13,7 +13,7 @@ It requires C++11, <a href="https://opencv.org/">OpenCV</a> , <a href="https://g
 Clone the repository and catkin_make:
 
     cd ~/catkin_ws/src
-    git clone https://github.com/queenie-ho/3DMAGNSS-VINS-IO-FGO.git
+    git clone https://github.com/queenie-ho/3DMA_GNSS_VINS-IO_FGO.git
     cd ../
     catkin_make
     source ~/catkin_ws/devel/setup.bash
