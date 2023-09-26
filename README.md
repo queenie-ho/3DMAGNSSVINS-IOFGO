@@ -26,7 +26,7 @@ Clone the repository and catkin_make:
 
 <!-- Acknowledgements  -->
 ## Acknowledgements    
-The system framework and VIO part are adapted from <a href="https://github.com/HKUST-Aerial-Robotics/VINS-Mono">VINS-Mono</a>. We use <a href="http://ceres-solver.org/index.html">Ceres</a> to do the optimization.
+The system framework of VIO part are adapted from <a href="https://github.com/HKUST-Aerial-Robotics/VINS-Mono">VINS-Mono</a>. We use <a href="http://ceres-solver.org/index.html">Ceres</a> to do the optimization.
 
 <!-- Related Publications  -->
 ## Related Publications
