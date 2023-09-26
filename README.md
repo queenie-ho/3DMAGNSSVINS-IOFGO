@@ -1,5 +1,13 @@
 # 3DMAGNSS/VINS-IO FGO
 
+<!-- Prerequisites  -->
+## Prerequisites
+
+This package is tested in Ubuntu 18.04 under ROS Kinetic environment.
+It requires C++11, Eigen 3.3.3 and ceres 1.12.0.
+
+
+
 <!-- Build 3DMAGNSS/VINS-IO FGO  -->
 ## Build 3DMAGNSS/VINS-IO FGO on Linux
 
