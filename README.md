@@ -19,3 +19,6 @@ Clone the repository and catkin_make:
 
 <!-- Acknowledgements  -->
 ## Acknowledgements    
+
+<!-- Related Publications  -->
+## Related Publications
