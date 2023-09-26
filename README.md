@@ -4,7 +4,7 @@
 ## Prerequisites
 
 This package is tested in Ubuntu 18.04 under ROS Kinetic environment.
-It requires C++11, <a href="https://opencv.org/">OpenCV</a> , <a href="https://gitlab.com/libeigen/eigen/-/archive/3.3.3/eigen-3.3.3.zip">Eigen 3.3.3</a> , <a href="https://github.com/stevenlovegrove/Pangolin">Pangolin</a> and <a href="http://ceres-solver.org/installation.html">ceres 1.12.0.</a> 
+It requires C++11, <a href="https://opencv.org/">OpenCV</a> , <a href="https://gitlab.com/libeigen/eigen/-/archive/3.3.3/eigen-3.3.3.zip">Eigen 3.3.3</a> , <a href="https://github.com/stevenlovegrove/Pangolin">Pangolin</a> and <a href="http://ceres-solver.org/installation.html">Ceres 1.12.0.</a> 
 
 
 <!-- Build 3DMAGNSS/VINS-IO FGO  -->
