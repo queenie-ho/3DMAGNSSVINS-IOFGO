@@ -31,3 +31,4 @@ The system framework and VIO part are adapted from <a href="https://github.com/H
 <!-- Related Publications  -->
 ## Related Publications
 Ho, H. Y., Ng, H. F., Leung, Y. T., Wen, W., Hsu, L. T., & Luo, Y. (2023). Smartphone Level Indoor/outdoor Ubiquitous Pedestrian Positioning 3DMA Gnss/vins Integration Using Fgo. The International Archives of the Photogrammetry, Remote Sensing and Spatial Information Sciences, 48, 175-182.
+Qin, T., Li, P., & Shen, S. (2018). Vins-mono: A robust and versatile monocular visual-inertial state estimator. IEEE Transactions on Robotics, 34(4), 1004-1020.
