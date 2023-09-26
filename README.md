@@ -1,7 +1,7 @@
 # 3DMAGNSS/VINS-IO FGO
 
 <!-- Build 3DMAGNSS/VINS-IO FGO  -->
-## 3DMAGNSS/VINS-IO FGO
+## Build 3DMAGNSS/VINS-IO FGO on Linux
 
 Clone the repository and catkin_make:
 
