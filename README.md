@@ -24,11 +24,11 @@ Clone the repository and catkin_make:
     roslaunch vins_estimator euroc.launch 
     roslaunch vins_estimator vins_rviz.launch
 
-
-
-
-
-
+<br />
+<br />
+<br />
+<br />
+<br />
 <!-- Acknowledgements  -->
 ## Acknowledgements    
 The system framework of VIO part are adapted from <a href="https://github.com/HKUST-Aerial-Robotics/VINS-Mono">VINS-Mono</a>. We use <a href="http://ceres-solver.org/index.html">Ceres</a> to do the optimization.
